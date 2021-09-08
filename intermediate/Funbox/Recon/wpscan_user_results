@@ -1,0 +1,129 @@
+_______________________________________________________________
+         __          _______   _____
+         \ \        / /  __ \ / ____|
+          \ \  /\  / /| |__) | (___   ___  __ _ _ __ ®
+           \ \/  \/ / |  ___/ \___ \ / __|/ _` | '_ \
+            \  /\  /  | |     ____) | (__| (_| | | | |
+             \/  \/   |_|    |_____/ \___|\__,_|_| |_|
+
+         WordPress Security Scanner by the WPScan Team
+                         Version 3.8.17
+       Sponsored by Automattic - https://automattic.com/
+       @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart
+_______________________________________________________________
+
+[32m[+][0m URL: http://funbox.fritz.box/ [192.168.116.77]
+[32m[+][0m Started: Tue Sep  7 18:25:32 2021
+
+Interesting Finding(s):
+
+[32m[+][0m Headers
+ | Interesting Entry: Server: Apache/2.4.41 (Ubuntu)
+ | Found By: Headers (Passive Detection)
+ | Confidence: 100%
+
+[32m[+][0m robots.txt found: http://funbox.fritz.box/robots.txt
+ | Found By: Robots Txt (Aggressive Detection)
+ | Confidence: 100%
+
+[32m[+][0m XML-RPC seems to be enabled: http://funbox.fritz.box/xmlrpc.php
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+ | References:
+ |  - http://codex.wordpress.org/XML-RPC_Pingback_API
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_ghost_scanner/
+ |  - https://www.rapid7.com/db/modules/auxiliary/dos/http/wordpress_xmlrpc_dos/
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_xmlrpc_login/
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_pingback_access/
+
+[32m[+][0m WordPress readme found: http://funbox.fritz.box/readme.html
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+
+[32m[+][0m Upload directory has listing enabled: http://funbox.fritz.box/wp-content/uploads/
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+
+[32m[+][0m The external WP-Cron seems to be enabled: http://funbox.fritz.box/wp-cron.php
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 60%
+ | References:
+ |  - https://www.iplocation.net/defend-wordpress-from-ddos
+ |  - https://github.com/wpscanteam/wpscan/issues/1299
+
+[32m[+][0m WordPress version 5.4.2 identified (Insecure, released on 2020-06-10).
+ | Found By: Rss Generator (Passive Detection)
+ |  - http://funbox.fritz.box/index.php/feed/, <generator>https://wordpress.org/?v=5.4.2</generator>
+ |  - http://funbox.fritz.box/index.php/comments/feed/, <generator>https://wordpress.org/?v=5.4.2</generator>
+ |
+ | [31m[!][0m 2 vulnerabilities identified:
+ |
+ | [31m[!][0m Title: WordPress 4.7-5.7 - Authenticated Password Protected Pages Exposure
+ |     Fixed in: 5.4.5
+ |     References:
+ |      - https://wpscan.com/vulnerability/6a3ec618-c79e-4b9c-9020-86b157458ac5
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-29450
+ |      - https://wordpress.org/news/2021/04/wordpress-5-7-1-security-and-maintenance-release/
+ |      - https://blog.wpscan.com/2021/04/15/wordpress-571-security-vulnerability-release.html
+ |      - https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-pmmh-2f36-wvhq
+ |      - https://core.trac.wordpress.org/changeset/50717/
+ |      - https://www.youtube.com/watch?v=J2GXmxAdNWs
+ |
+ | [31m[!][0m Title: WordPress 3.7 to 5.7.1 - Object Injection in PHPMailer
+ |     Fixed in: 5.4.6
+ |     References:
+ |      - https://wpscan.com/vulnerability/4cd46653-4470-40ff-8aac-318bee2f998d
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-36326
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-19296
+ |      - https://github.com/WordPress/WordPress/commit/267061c9595fedd321582d14c21ec9e7da2dcf62
+ |      - https://wordpress.org/news/2021/05/wordpress-5-7-2-security-release/
+ |      - https://github.com/PHPMailer/PHPMailer/commit/e2e07a355ee8ff36aba21d0242c5950c56e4c6f9
+ |      - https://www.wordfence.com/blog/2021/05/wordpress-5-7-2-security-release-what-you-need-to-know/
+ |      - https://www.youtube.com/watch?v=HaW15aMzBUM
+
+[32m[+][0m WordPress theme in use: twentyseventeen
+ | Location: http://funbox.fritz.box/wp-content/themes/twentyseventeen/
+ | Last Updated: 2021-07-22T00:00:00.000Z
+ | Readme: http://funbox.fritz.box/wp-content/themes/twentyseventeen/readme.txt
+ | [33m[!][0m The version is out of date, the latest version is 2.8
+ | Style URL: http://funbox.fritz.box/wp-content/themes/twentyseventeen/style.css?ver=20190507
+ | Style Name: Twenty Seventeen
+ | Style URI: https://wordpress.org/themes/twentyseventeen/
+ | Description: Twenty Seventeen brings your site to life with header video and immersive featured images. With a fo...
+ | Author: the WordPress team
+ | Author URI: https://wordpress.org/
+ |
+ | Found By: Css Style In Homepage (Passive Detection)
+ |
+ | Version: 2.3 (80% confidence)
+ | Found By: Style (Passive Detection)
+ |  - http://funbox.fritz.box/wp-content/themes/twentyseventeen/style.css?ver=20190507, Match: 'Version: 2.3'
+
+
+[34m[i][0m User(s) Identified:
+
+[32m[+][0m admin
+ | Found By: Author Posts - Author Pattern (Passive Detection)
+ | Confirmed By:
+ |  Rss Generator (Passive Detection)
+ |  Wp Json Api (Aggressive Detection)
+ |   - http://funbox.fritz.box/index.php/wp-json/wp/v2/users/?per_page=100&page=1
+ |  Author Id Brute Forcing - Author Pattern (Aggressive Detection)
+ |  Login Error Messages (Aggressive Detection)
+
+[32m[+][0m joe
+ | Found By: Author Id Brute Forcing - Author Pattern (Aggressive Detection)
+ | Confirmed By: Login Error Messages (Aggressive Detection)
+
+[32m[+][0m WPScan DB API OK
+ | Plan: free
+ | Requests Done (during the scan): 0
+ | Requests Remaining: 23
+
+[32m[+][0m Finished: Tue Sep  7 18:25:34 2021
+[32m[+][0m Requests Done: 16
+[32m[+][0m Cached Requests: 53
+[32m[+][0m Data Sent: 4.247 KB
+[32m[+][0m Data Received: 16.104 KB
+[32m[+][0m Memory used: 149.98 MB
+[32m[+][0m Elapsed time: 00:00:01

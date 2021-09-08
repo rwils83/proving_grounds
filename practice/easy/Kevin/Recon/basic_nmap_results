@@ -1,0 +1,49 @@
+# Nmap 7.92 scan initiated Tue Sep  7 21:06:02 2021 as: nmap -A -T4 -oN basic_nmap_results 192.168.116.45
+Nmap scan report for 192.168.116.45
+Host is up (0.052s latency).
+Not shown: 989 closed tcp ports (conn-refused)
+PORT      STATE SERVICE            VERSION
+80/tcp    open  http               GoAhead WebServer
+| http-title: HP Power Manager
+|_Requested resource was http://192.168.116.45/index.asp
+|_http-server-header: GoAhead-Webs
+135/tcp   open  msrpc              Microsoft Windows RPC
+139/tcp   open  netbios-ssn        Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds       Windows 7 Ultimate N 7600 microsoft-ds (workgroup: WORKGROUP)
+3389/tcp  open  ssl/ms-wbt-server?
+| ssl-cert: Subject: commonName=kevin
+| Not valid before: 2021-09-07T01:07:41
+|_Not valid after:  2022-03-09T01:07:41
+|_ssl-date: 2021-09-08T01:10:22+00:00; +3m11s from scanner time.
+49152/tcp open  msrpc              Microsoft Windows RPC
+49153/tcp open  msrpc              Microsoft Windows RPC
+49154/tcp open  msrpc              Microsoft Windows RPC
+49155/tcp open  msrpc              Microsoft Windows RPC
+49159/tcp open  msrpc              Microsoft Windows RPC
+49160/tcp open  msrpc              Microsoft Windows RPC
+Service Info: Host: KEVIN; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-time: 
+|   date: 2021-09-08T01:10:14
+|_  start_date: 2021-09-08T01:08:18
+|_nbstat: NetBIOS name: KEVIN, NetBIOS user: <unknown>, NetBIOS MAC: 00:50:56:bf:ed:18 (VMware)
+| smb2-security-mode: 
+|   2.1: 
+|_    Message signing enabled but not required
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb-os-discovery: 
+|   OS: Windows 7 Ultimate N 7600 (Windows 7 Ultimate N 6.1)
+|   OS CPE: cpe:/o:microsoft:windows_7::-
+|   Computer name: kevin
+|   NetBIOS computer name: KEVIN\x00
+|   Workgroup: WORKGROUP\x00
+|_  System time: 2021-09-07T18:10:14-07:00
+|_clock-skew: mean: 1h48m10s, deviation: 3h30m00s, median: 3m10s
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Sep  7 21:07:11 2021 -- 1 IP address (1 host up) scanned in 69.30 seconds

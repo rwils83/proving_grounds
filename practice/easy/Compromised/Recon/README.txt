@@ -1,0 +1,1 @@
+Please keep your personal shares locked down. Just because it's hidden it doesn't mean it's not accessible. Also, please stop storing passwords in your scripts. Encoding is not encryption and this information can be lifted from the logs. -Security
