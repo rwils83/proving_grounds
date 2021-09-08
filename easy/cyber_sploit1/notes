@@ -1,0 +1,7 @@
+ Found Webserver on port 80
+Found Username in contents
+Found base64 in robots.txt
+Decoded base64, tested as password
+Gave ssh to itsskv user
+Used uname -a, found vulnerable Kernel
+Used kernel exploit 37292.c, compiled on machine, gave root shell

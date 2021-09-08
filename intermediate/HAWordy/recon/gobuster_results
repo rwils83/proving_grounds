@@ -1,0 +1,4 @@
+/info.php             (Status: 200) [Size: 14]
+/wordpress            (Status: 301) [Size: 320] [--> http://192.168.155.23/wordpress/]
+/javascript           (Status: 301) [Size: 321] [--> http://192.168.155.23/javascript/]
+/server-status        (Status: 403) [Size: 279]

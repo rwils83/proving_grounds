@@ -1,0 +1,11 @@
+Found SQLi in book ISBN parameter
+Used SQLmap to test parameter, used --dump-all, found password hash
+Used admin admin to get into admin login page
+Added book with php reverse shell as image
+Got reverse shell as www-data
+Was able to read file with ssh password for user Tony
+SSH as tony
+Found tony could run time with out password as sudo
+ran sudo time /bin/bash to gain root shell
+read both proof and local flags
+

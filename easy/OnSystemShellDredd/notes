@@ -1,0 +1,6 @@
+Anonymous ftp, found id_rsa
+Scanned deeper ports, found 61000 open to ssh
+ssh in as hannah, got local
+found cpulimit with suid, researched on gtfobins
+got root by using gtfobins suid information
+
